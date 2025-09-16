@@ -39,7 +39,7 @@ void loop() {
   if (now - lastMsg > 3000) {
     lastMsg = now;
 
-    // 🔥 Fake sunlight values (0–1000)
+    
     int lightValue = random(0, 1000);
 
     char msg[10];
