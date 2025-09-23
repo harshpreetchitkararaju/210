@@ -1,52 +1,22 @@
-#include <SPI.h>
-#include <WiFiNINA.h>
-#include <PubSubClient.h>
+#include <Wire.h>
+#include <BH1750.h>
 
-const char* ssid = "AirFiber-pHLK0q";      
-const char* password = "54455445";        
-const char* mqtt_server = "192.168.1.250"; 
-
-WiFiClient wifiClient;
-PubSubClient client(wifiClient);
-
-unsigned long lastMsg = 0;
+BH1750 lightMeter;
 
 void setup() {
-  Serial.begin(115200);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  Serial.begin(9600);       // Serial to Node-RED
+  Wire.begin();
+  
+  if (lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE)) {
+    Serial.println("BH1750 ready");
+  } else {
+    Serial.println("Error: BH1750 not detected");
+    while (1);
   }
-  Serial.println("\nWiFi connected!");
-  client.setServer(mqtt_server, 1883);
 }
 
 void loop() {
-  if (!client.connected()) {
-    while (!client.connected()) {
-      if (client.connect("Nano33IoTClient")) {
-        Serial.println("Connected to MQTT broker!");
-      } else {
-        delay(2000);
-      }
-    }
-  }
-
-  client.loop();
-
-  unsigned long now = millis();
-  if (now - lastMsg > 3000) {
-    lastMsg = now;
-
-    
-    int lightValue = random(0, 1000);
-
-    char msg[10];
-    sprintf(msg, "%d", lightValue);
-    client.publish("terrarium/light", msg);
-
-    Serial.print("Published: ");
-    Serial.println(msg);
-  }
+  float lux = lightMeter.readLightLevel();   // Read light in lux
+  Serial.println(lux);                       // Send to Node-RED
+  delay(1000);                               // Every second
 }
