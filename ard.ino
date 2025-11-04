@@ -3,7 +3,7 @@ const int PH_PIN = A1;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("🐠 FIXED CODE - BOTH SENSORS 🐠");
+  Serial.println(" FIXED CODE - BOTH SENSORS ");
 }
 
 void loop() {
@@ -14,7 +14,7 @@ void loop() {
   float pH = 7.0 + ((2.5 - voltage) * 3.0);
   
   // Turbidity logic - adjust threshold based on your sensor
-  bool isDirty = (turbidity < 200); // Change this number as needed
+  bool isDirty = (turbidity < 200); // 
   
   // Send all data
   Serial.print("PH:");
